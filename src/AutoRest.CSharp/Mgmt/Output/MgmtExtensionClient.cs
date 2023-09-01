@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Generation.Writers;
 using AutoRest.CSharp.Mgmt.Decorator;
@@ -145,6 +146,12 @@ namespace AutoRest.CSharp.Mgmt.Output
         public override FormattableString Description => _description ??= $"A class to add extension methods to {ResourceName}.";
 
         protected override string DefaultAccessibility => "internal";
+
+        protected override SignatureTypeProvider? Customization => throw new NotImplementedException();
+
+        protected override SignatureTypeProvider? PreviousContract => throw new NotImplementedException();
+
+        public override IList<MethodSignature> Methods => throw new NotImplementedException();
 
         /// <summary>
         /// Construct a key for overload of this method signature.

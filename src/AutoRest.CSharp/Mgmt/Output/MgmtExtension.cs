@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Input;
 using AutoRest.CSharp.Mgmt.AutoRest;
@@ -171,5 +172,11 @@ namespace AutoRest.CSharp.Mgmt.Output
         private Dictionary<CSharpType, MgmtExtensionClient> Cache => _cache ??= _extensionClients.ToDictionary(
             extensionClient => extensionClient.ExtendedResourceType,
             extensionClient => extensionClient);
+
+        protected override SignatureTypeProvider? Customization => throw new NotImplementedException();
+
+        protected override SignatureTypeProvider? PreviousContract => throw new NotImplementedException();
+
+        public override IList<MethodSignature> Methods => throw new NotImplementedException();
     }
 }
