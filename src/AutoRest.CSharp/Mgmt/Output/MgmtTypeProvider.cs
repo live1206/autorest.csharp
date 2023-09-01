@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Input;
 using AutoRest.CSharp.Mgmt.AutoRest;
@@ -25,7 +26,7 @@ namespace AutoRest.CSharp.Mgmt.Output
     /// MgmtTypeProvider represents the information that corresponds to the generated class in the SDK that contains operations in it.
     /// This includes <see cref="Resource"/>, <see cref="ResourceCollection"/>, <see cref="ArmClientExtension"/>, <see cref="MgmtExtension"/>, <see cref="MgmtExtensionClient"/> and <see cref="MgmtExtensionWrapper"/>
     /// </summary>
-    internal abstract class MgmtTypeProvider : TypeProvider
+    internal abstract class MgmtTypeProvider : SignatureTypeProvider
     {
         protected bool IsArmCore { get; }
 

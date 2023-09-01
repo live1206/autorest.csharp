@@ -24,6 +24,8 @@ namespace AutoRest.CSharp.Common.Output.Models.Types
 {
     internal abstract class SignatureTypeProvider : TypeProvider
     {
+        protected SignatureTypeProvider(BuildContext context) : this(context.DefaultNamespace, context.SourceInputModel) { }
+
         protected SignatureTypeProvider(string defaultNamespace, SourceInputModel? sourceInputModel) : base(defaultNamespace, sourceInputModel)
         {
         }
