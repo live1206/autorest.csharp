@@ -279,5 +279,9 @@ namespace AutoRest.CSharp.Mgmt.Output
             }
             return uniqueSets;
         }
+
+        protected IList<MethodSignature>? _methods;
+        public override IList<MethodSignature> Methods => _methods ?? EnsureMethods();
+        private IList<MethodSignature> EnsureMethods() => AllOperations.Select(x => x.MethodSignature).ToList();
     }
 }

@@ -198,6 +198,13 @@
                         "type": "string"
                     },
                     {
+                        "name": "$additional",
+                        "description": "Additional parameter.",
+                        "in": "query",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
                         "$ref": "#/parameters/ApiVersionParameter"
                     },
                     {

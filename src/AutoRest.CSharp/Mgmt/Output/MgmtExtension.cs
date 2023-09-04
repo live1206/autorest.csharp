@@ -36,6 +36,20 @@ namespace AutoRest.CSharp.Mgmt.Output
             ChildResources = !Configuration.MgmtConfiguration.IsArmCore || ArmCoreType.Namespace != MgmtContext.Context.DefaultNamespace ? base.ChildResources : Enumerable.Empty<Resource>();
         }
 
+        private MgmtExtension(IList<MethodSignature> methods, IEnumerable<Operation> allRawOperations, IEnumerable<MgmtExtensionClient> extensionClients, Type armCoreType, string defaultName, string defaultNamespace, FormattableString description, IEnumerable<Resource> childResources)
+            : base(armCoreType.Name)
+        {
+            _methods = methods;
+            _allRawOperations = allRawOperations;
+            _extensionClients = extensionClients; // this property is populated later
+            ArmCoreType = armCoreType;
+            DefaultName = defaultName;
+            DefaultNamespace = defaultNamespace;
+            Description = description;
+            ArmCoreNamespace = ArmCoreType.Namespace!;
+            ChildResources = childResources;
+        }
+
         protected override ConstructorSignature? EnsureMockingCtor()
         {
             return IsArmCore ? null : base.EnsureMockingCtor();
@@ -173,10 +187,10 @@ namespace AutoRest.CSharp.Mgmt.Output
             extensionClient => extensionClient.ExtendedResourceType,
             extensionClient => extensionClient);
 
-        protected override SignatureTypeProvider? Customization => throw new NotImplementedException();
+        protected override SignatureTypeProvider? Customization
+            => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
 
-        protected override SignatureTypeProvider? PreviousContract => throw new NotImplementedException();
-
-        public override IList<MethodSignature> Methods => throw new NotImplementedException();
+        protected override SignatureTypeProvider? PreviousContract
+            => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
     }
 }

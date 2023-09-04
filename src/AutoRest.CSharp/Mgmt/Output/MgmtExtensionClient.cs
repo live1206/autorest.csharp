@@ -8,6 +8,7 @@ using System.Text;
 using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Generation.Writers;
+using AutoRest.CSharp.Mgmt.AutoRest;
 using AutoRest.CSharp.Mgmt.Decorator;
 using AutoRest.CSharp.Mgmt.Models;
 using AutoRest.CSharp.Output.Models;
@@ -31,6 +32,12 @@ namespace AutoRest.CSharp.Mgmt.Output
             _extensionForChildResources = extensionForChildResources;
             ExtendedResourceType = resourceType;
             DefaultName = $"{ResourceName}ExtensionClient";
+        }
+
+        public MgmtExtensionClient(IList<MethodSignature> methods, CSharpType resourceType, IEnumerable<MgmtClientOperation> operations, MgmtExtension? extensionForChildResources)
+            : this(resourceType, operations, extensionForChildResources)
+        {
+            _methods = methods;
         }
 
         public override bool IsInitializedByProperties => true;
@@ -147,11 +154,11 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected override string DefaultAccessibility => "internal";
 
-        protected override SignatureTypeProvider? Customization => throw new NotImplementedException();
+        protected override SignatureTypeProvider? Customization
+            => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), ExtendedResourceType, _operations, _extensionForChildResources);
 
-        protected override SignatureTypeProvider? PreviousContract => throw new NotImplementedException();
-
-        public override IList<MethodSignature> Methods => throw new NotImplementedException();
+        protected override SignatureTypeProvider? PreviousContract
+            => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), ExtendedResourceType, _operations, _extensionForChildResources);
 
         /// <summary>
         /// Construct a key for overload of this method signature.

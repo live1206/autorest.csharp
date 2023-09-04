@@ -99,6 +99,12 @@ namespace AutoRest.CSharp.Mgmt.Generation
                 WriteMethod(clientOperation, true);
                 WriteMethod(clientOperation, false);
             }
+
+            foreach ((MethodSignature currentMethodToCall, MethodSignature previousMethodToAdd, IList<Parameter> missingParameters) in This.MissingOverloadMethods)
+            {
+                _writer.WriteMissingOverloadMethod(currentMethodToCall, previousMethodToAdd, missingParameters);
+                _writer.Line();
+            }
         }
 
         protected void WriteClassDeclaration()

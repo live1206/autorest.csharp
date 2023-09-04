@@ -496,19 +496,10 @@ namespace AutoRest.CSharp.Mgmt.Output
         public Parameter ResourceParameter => new(Name: "resource", Description: $"The client parameters to use in these operations.", Type: typeof(ArmResource), DefaultValue: null, ValidationType.None, null);
         public Parameter ResourceDataParameter => new(Name: "data", Description: $"The resource that is the target of operations.", Type: ResourceData.Type, DefaultValue: null, ValidationType.None, null);
 
-        protected override SignatureTypeProvider? Customization => 
+        protected override SignatureTypeProvider? Customization =>
             new Resource(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
 
         protected override SignatureTypeProvider? PreviousContract =>
             new Resource(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
-
-        private IList<MethodSignature>? _methods;
-        public override IList<MethodSignature> Methods => _methods ?? EnsureMethods();
-        private IList<MethodSignature> EnsureMethods() 
-        {
-            var result = AllOperations.Select(x => x.MethodSignature).ToList();
-            result.Add(CreateResourceIdentifierMethodSignature);
-            return result;
-        }
     }
 }
