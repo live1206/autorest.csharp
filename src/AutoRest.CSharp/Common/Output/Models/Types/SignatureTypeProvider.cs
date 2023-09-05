@@ -82,11 +82,15 @@ namespace AutoRest.CSharp.Common.Output.Models.Types
                 // TODO: handle missing type
                 return result;
             }
-            var methods = typeSymbol!.GetMembers().OfType<IMethodSymbol>();
+            var methods = typeSymbol!.GetMembers().OfType<IMethodSymbol>().Where(x => x.DeclaredAccessibility == Accessibility.Public);
             foreach (var method in methods)
             {
-                ;
-                if (MgmtContext.TypeFactory.TryCreateType(method.ReturnType, out var returnType))
+                var returnType = MgmtContext.TypeFactory.GetCsharpType(method.ReturnType);
+                if (returnType is null)
+                {
+                    // TODO: handle missing method return type from MgmtOutputLibrary
+                }
+                else
                 {
                     // TODO: handle missing parameter type from MgmtOutputLibrary
                     var parameters = new List<MethodParameter>();
@@ -99,10 +103,6 @@ namespace AutoRest.CSharp.Common.Output.Models.Types
                         }
                     }
                     result.Add(new MethodSignature(method.Name, null, null, MapModifiers(method), returnType, null, parameters));
-                }
-                else
-                {
-                    // TODO: handle missing method return type from MgmtOutputLibrary
                 }
             }
             return result;

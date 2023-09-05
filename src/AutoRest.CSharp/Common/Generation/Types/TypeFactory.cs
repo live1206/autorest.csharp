@@ -10,13 +10,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Input;
+using AutoRest.CSharp.Mgmt.AutoRest;
 using AutoRest.CSharp.Output.Models.Shared;
 using AutoRest.CSharp.Output.Models.Types;
 using Azure;
 using Azure.Core;
 using Azure.Core.Expressions.DataFactory;
+using Azure.ResourceManager;
 using Microsoft.CodeAnalysis;
 
 namespace AutoRest.CSharp.Generation.Types
@@ -34,15 +37,15 @@ namespace AutoRest.CSharp.Generation.Types
 
         public CSharpType CreateType(InputType inputType) => inputType switch
         {
-            InputLiteralType literalType       => CreateType(literalType.LiteralValueType),
-            InputUnionType unionType           => new CSharpType(typeof(object), unionType.IsNullable),
-            InputListType listType             => new CSharpType(typeof(IList<>), listType.IsNullable, CreateType(listType.ElementType)),
+            InputLiteralType literalType => CreateType(literalType.LiteralValueType),
+            InputUnionType unionType => new CSharpType(typeof(object), unionType.IsNullable),
+            InputListType listType => new CSharpType(typeof(IList<>), listType.IsNullable, CreateType(listType.ElementType)),
             InputDictionaryType dictionaryType => new CSharpType(typeof(IDictionary<,>), inputType.IsNullable, typeof(string), CreateType(dictionaryType.ValueType)),
-            InputEnumType enumType             => _library.ResolveEnum(enumType).WithNullable(inputType.IsNullable),
+            InputEnumType enumType => _library.ResolveEnum(enumType).WithNullable(inputType.IsNullable),
             // TODO -- this is a temporary solution until we refactored the type replacement to use input types instead of code model schemas
             InputModelType { Namespace: "Azure.Core.Foundations", Name: "Error" } => SystemObjectType.Create(AzureResponseErrorType, AzureResponseErrorType.Namespace!, null).Type,
-            InputModelType model               => _library.ResolveModel(model).WithNullable(inputType.IsNullable),
-            InputPrimitiveType primitiveType   => primitiveType.Kind switch
+            InputModelType model => _library.ResolveModel(model).WithNullable(inputType.IsNullable),
+            InputPrimitiveType primitiveType => primitiveType.Kind switch
             {
                 InputTypeKind.AzureLocation => new CSharpType(typeof(AzureLocation), inputType.IsNullable),
                 InputTypeKind.BinaryData => new CSharpType(typeof(BinaryData), inputType.IsNullable),
@@ -443,6 +446,56 @@ namespace AutoRest.CSharp.Generation.Types
             }
 
             return to.FrameworkType == typeof(IReadOnlyList<>) || to.FrameworkType == typeof(IList<>);
+        }
+
+        public CSharpType? GetCsharpType(ITypeSymbol symbol)
+        {
+            var stack = new Stack<string>();
+            var type = UnWrapType(symbol, stack);
+
+            while (stack.TryPop(out var wrappedType))
+            {
+                switch (wrappedType)
+                {
+                    case "ArmOperation":
+                        type = new CSharpType(typeof(ArmOperation<>), type!);
+                        break;
+                    case "Task":
+                        type = new CSharpType(typeof(Task<>), type!);
+                        break;
+                    case "AsyncPageable":
+                        type = new CSharpType(typeof(AsyncPageable<>), type!);
+                        break;
+                    case "Pageable":
+                        type = new CSharpType(typeof(Pageable<>), type!);
+                        break;
+                    case "Response":
+                        type = new CSharpType(typeof(Response<>), type!);
+                        break;
+                }
+            }
+            return type;
+        }
+
+        private CSharpType? UnWrapType(ITypeSymbol symbol, Stack<string> wrapers)
+        {
+            var namedTypeSymbol = symbol as INamedTypeSymbol;
+            if (namedTypeSymbol == null)
+            {
+                throw new InvalidCastException($"Unexpected type {symbol}");
+            }
+
+            if (namedTypeSymbol.TypeArguments.Any())
+            {
+                wrapers.Push(namedTypeSymbol.Name);
+                return UnWrapType(namedTypeSymbol.TypeArguments[0], wrapers);
+            }
+
+            if (TryCreateType(namedTypeSymbol, out var result))
+            {
+                return result;
+            }
+            return null;
         }
     }
 }

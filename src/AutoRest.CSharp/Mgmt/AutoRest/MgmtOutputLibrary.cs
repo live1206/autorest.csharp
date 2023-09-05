@@ -815,16 +815,10 @@ namespace AutoRest.CSharp.Mgmt.AutoRest
             // Try to search declaration name too if no key matches. i.e. Resource Data Type will be appended a 'Data' in the name and won't be found through key
             provider ??= _schemaOrNameToModels.FirstOrDefault(s => s.Value is MgmtObjectType mot && mot.Declaration.Name == originalName).Value;
 
+            // Try to get resource
+            provider ??= ArmResources.FirstOrDefault(m => m.Declaration.Name == originalName);
+
             return provider?.Type;
-        }
-
-        public bool TryGetTypeProvider(string originalName, [MaybeNullWhen(false)] out TypeProvider provider)
-        {
-            if (_schemaOrNameToModels.TryGetValue(originalName, out provider))
-                return true;
-
-            provider = ResourceSchemaMap.Values.FirstOrDefault(m => m.Type.Name == originalName);
-            return provider != null;
         }
 
         public IEnumerable<Resource> FindResources(ResourceData resourceData)
