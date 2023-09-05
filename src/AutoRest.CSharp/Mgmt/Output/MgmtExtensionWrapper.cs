@@ -38,6 +38,16 @@ namespace AutoRest.CSharp.Mgmt.Output
             ExtensionClients = extensionClients;
         }
 
+        private MgmtExtensionWrapper(IList<MethodSignature> methods, string defaultName, FormattableString description, IEnumerable<MgmtExtension> extensions, IEnumerable<MgmtExtensionClient> extensionClients)
+            : base(MgmtContext.RPName)
+        {
+            _methods = methods;
+            DefaultName = defaultName;
+            Description = description;
+            Extensions = extensions;
+            ExtensionClients = extensionClients;
+        }
+
         public override CSharpType? BaseType => null;
 
         public override FormattableString Description { get; }
@@ -46,11 +56,11 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected override string DefaultAccessibility => "public";
 
-        protected override SignatureTypeProvider? Customization => throw new NotImplementedException();
+        protected override SignatureTypeProvider? Customization
+            => new MgmtExtensionWrapper(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), DefaultName, Description, Extensions, ExtensionClients);
 
-        protected override SignatureTypeProvider? PreviousContract => throw new NotImplementedException();
-
-        public override IList<MethodSignature> Methods => throw new NotImplementedException();
+        protected override SignatureTypeProvider? PreviousContract
+            => new MgmtExtensionWrapper(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), DefaultName, Description, Extensions, ExtensionClients);
 
         protected override IEnumerable<MgmtClientOperation> EnsureClientOperations()
         {

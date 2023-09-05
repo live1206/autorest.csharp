@@ -732,8 +732,15 @@ namespace MgmtOperations
                 throw;
             }
         }
+
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual AvailabilitySetResource Get(string expand, CancellationToken cancellationToken)
+        public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string expand, CancellationToken cancellationToken)
+        {
+            return await GetAsync(expand, default, cancellationToken);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual Response<AvailabilitySetResource> Get(string expand, CancellationToken cancellationToken)
         {
             return Get(expand, default, cancellationToken);
         }

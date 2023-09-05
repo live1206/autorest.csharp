@@ -282,6 +282,6 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected IList<MethodSignature>? _methods;
         public override IList<MethodSignature> Methods => _methods ?? EnsureMethods();
-        private IList<MethodSignature> EnsureMethods() => AllOperations.Select(x => x.MethodSignature).ToList();
+        private IList<MethodSignature> EnsureMethods() => AllOperations.Select(x => x.MethodSignature).Union(AllOperations.Select(x => x.MethodSignature.WithAsync(true))).ToList();
     }
 }

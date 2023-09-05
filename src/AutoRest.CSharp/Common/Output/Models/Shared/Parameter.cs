@@ -297,8 +297,22 @@ namespace AutoRest.CSharp.Output.Models.Shared
                 return false;
             }
 
-            var result = x.Type.Equals(y.Type) && x.Name == y.Name;
+            var result = CompareType(x.Type, y.Type) && x.Name == y.Name;
             return result;
+        }
+
+        private bool CompareType(CSharpType? x, CSharpType? y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+            return x.GetType().Equals(y.GetType());
         }
 
         public int GetHashCode([DisallowNull] Parameter obj)

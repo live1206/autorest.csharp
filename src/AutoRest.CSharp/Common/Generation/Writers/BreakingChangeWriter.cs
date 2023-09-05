@@ -21,7 +21,8 @@ namespace AutoRest.CSharp.Generation.Writers
             using (writer.WriteMethodDeclaration(previousMethodToAdd, ignoreOptional: true))
             {
                 writer.Line();
-                writer.Append($"return {currentMethodToCall.Name}(");
+                var awaitOperation = previousMethodToAdd.Modifiers.HasFlag(MethodSignatureModifiers.Async) ? "await " : "";
+                writer.Append($"return {awaitOperation}{currentMethodToCall.Name}(");
                 var set = missingParameters.ToHashSet(new ParameterComparer());
                 foreach (var parameter in currentMethodToCall.Parameters)
                 {

@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -329,6 +330,30 @@ namespace MgmtOperations
                 scope.Failed(e);
                 throw;
             }
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
+        {
+            return await GetAsync(availabilitySetName, expand, default, cancellationToken);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual Response<AvailabilitySetResource> Get(string availabilitySetName, string expand, CancellationToken cancellationToken)
+        {
+            return Get(availabilitySetName, expand, default, cancellationToken);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual async Task<Response<bool>> ExistsAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
+        {
+            return await ExistsAsync(availabilitySetName, expand, default, cancellationToken);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public virtual Response<bool> Exists(string availabilitySetName, string expand, CancellationToken cancellationToken)
+        {
+            return Exists(availabilitySetName, expand, default, cancellationToken);
         }
 
         IEnumerator<AvailabilitySetResource> IEnumerable<AvailabilitySetResource>.GetEnumerator()
