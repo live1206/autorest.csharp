@@ -38,7 +38,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             ExtensionClients = extensionClients;
         }
 
-        private MgmtExtensionWrapper(IList<MethodSignature> methods, string defaultName, FormattableString description, IEnumerable<MgmtExtension> extensions, IEnumerable<MgmtExtensionClient> extensionClients)
+        private MgmtExtensionWrapper(IReadOnlyList<MethodSignature> methods, string defaultName, FormattableString description, IEnumerable<MgmtExtension> extensions, IEnumerable<MgmtExtensionClient> extensionClients)
             : base(MgmtContext.RPName)
         {
             _methods = methods;

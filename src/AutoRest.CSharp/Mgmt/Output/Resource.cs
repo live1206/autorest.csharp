@@ -135,7 +135,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             : this(operationSet, operations, resourceName, resourceType, resourceData, ResourcePosition)
         { }
 
-        private Resource(IList<MethodSignature> methods, Parameter[] armClientCtorParameters, IEnumerable<Operation> clientOperations, OperationSet operationSet, string resourceName, ResourceTypeSegment resourceType, ResourceData resourceData)
+        private Resource(IReadOnlyList<MethodSignature> methods, Parameter[] armClientCtorParameters, IEnumerable<Operation> clientOperations, OperationSet operationSet, string resourceName, ResourceTypeSegment resourceType, ResourceData resourceData)
             : base(resourceName)
         {
             _armClientCtorParameters = armClientCtorParameters;

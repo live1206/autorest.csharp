@@ -36,7 +36,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             ChildResources = !Configuration.MgmtConfiguration.IsArmCore || ArmCoreType.Namespace != MgmtContext.Context.DefaultNamespace ? base.ChildResources : Enumerable.Empty<Resource>();
         }
 
-        private MgmtExtension(IList<MethodSignature> methods, IEnumerable<Operation> allRawOperations, IEnumerable<MgmtExtensionClient> extensionClients, Type armCoreType, string defaultName, string defaultNamespace, FormattableString description, IEnumerable<Resource> childResources)
+        private MgmtExtension(IReadOnlyList<MethodSignature> methods, IEnumerable<Operation> allRawOperations, IEnumerable<MgmtExtensionClient> extensionClients, Type armCoreType, string defaultName, string defaultNamespace, FormattableString description, IEnumerable<Resource> childResources)
             : base(armCoreType.Name)
         {
             _methods = methods;

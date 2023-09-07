@@ -34,7 +34,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             DefaultName = $"{ResourceName}ExtensionClient";
         }
 
-        public MgmtExtensionClient(IList<MethodSignature> methods, CSharpType resourceType, IEnumerable<MgmtClientOperation> operations, MgmtExtension? extensionForChildResources)
+        public MgmtExtensionClient(IReadOnlyList<MethodSignature> methods, CSharpType resourceType, IEnumerable<MgmtClientOperation> operations, MgmtExtension? extensionForChildResources)
             : this(resourceType, operations, extensionForChildResources)
         {
             _methods = methods;
