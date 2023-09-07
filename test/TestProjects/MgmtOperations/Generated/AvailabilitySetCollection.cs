@@ -333,24 +333,116 @@ namespace MgmtOperations
             }
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetCollection.GetAsync(System.String,System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Retrieves information about an availability set.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="availabilitySetName"> The name of the availability set. </param>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        ///     <exception cref="T:System.ArgumentException"> <paramref name="availabilitySetName"/> is an empty string, and was expected to be non-empty. </exception>
+        ///     <exception cref="T:System.ArgumentNullException"> <paramref name="availabilitySetName"/> is null. </exception>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {
             return await GetAsync(availabilitySetName, expand, default, cancellationToken);
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetCollection.Get(System.String,System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Retrieves information about an availability set.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="availabilitySetName"> The name of the availability set. </param>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        ///     <exception cref="T:System.ArgumentException"> <paramref name="availabilitySetName"/> is an empty string, and was expected to be non-empty. </exception>
+        ///     <exception cref="T:System.ArgumentNullException"> <paramref name="availabilitySetName"/> is null. </exception>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual Response<AvailabilitySetResource> Get(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {
             return Get(availabilitySetName, expand, default, cancellationToken);
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetCollection.ExistsAsync(System.String,System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Checks to see if the resource exists in azure.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="availabilitySetName"> The name of the availability set. </param>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        ///     <exception cref="T:System.ArgumentException"> <paramref name="availabilitySetName"/> is an empty string, and was expected to be non-empty. </exception>
+        ///     <exception cref="T:System.ArgumentNullException"> <paramref name="availabilitySetName"/> is null. </exception>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<bool>> ExistsAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {
             return await ExistsAsync(availabilitySetName, expand, default, cancellationToken);
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetCollection.Exists(System.String,System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Checks to see if the resource exists in azure.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="availabilitySetName"> The name of the availability set. </param>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        ///     <exception cref="T:System.ArgumentException"> <paramref name="availabilitySetName"/> is an empty string, and was expected to be non-empty. </exception>
+        ///     <exception cref="T:System.ArgumentNullException"> <paramref name="availabilitySetName"/> is null. </exception>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual Response<bool> Exists(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {

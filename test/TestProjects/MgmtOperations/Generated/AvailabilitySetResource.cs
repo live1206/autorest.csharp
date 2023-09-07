@@ -733,12 +733,52 @@ namespace MgmtOperations
             }
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetResource.GetAsync(System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Retrieves information about an availability set.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string expand, CancellationToken cancellationToken)
         {
             return await GetAsync(expand, default, cancellationToken);
         }
 
+        /// <summary>
+        /// <member name="M:MgmtOperations.AvailabilitySetResource.Get(System.String,System.Threading.CancellationToken)">
+        ///     <summary>
+        ///     Retrieves information about an availability set.
+        ///     <list type="bullet">
+        ///     <item>
+        ///     <term>Request Path</term>
+        ///     <description>/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}</description>
+        ///     </item>
+        ///     <item>
+        ///     <term>Operation Id</term>
+        ///     <description>AvailabilitySets_Get</description>
+        ///     </item>
+        ///     </list>
+        ///     </summary>
+        ///     <param name="expand"> May be used to expand the participants. </param>
+        ///     <param name="cancellationToken"> The cancellation token to use. </param>
+        /// </member>
+        ///
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual Response<AvailabilitySetResource> Get(string expand, CancellationToken cancellationToken)
         {
