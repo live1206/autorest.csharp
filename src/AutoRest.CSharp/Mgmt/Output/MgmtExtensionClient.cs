@@ -13,6 +13,7 @@ using AutoRest.CSharp.Mgmt.Decorator;
 using AutoRest.CSharp.Mgmt.Models;
 using AutoRest.CSharp.Output.Models;
 using AutoRest.CSharp.Output.Models.Shared;
+using AutoRest.CSharp.Output.Models.Types;
 using AutoRest.CSharp.Utilities;
 using Azure.Core;
 using Azure.ResourceManager;
@@ -154,10 +155,10 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected override string DefaultAccessibility => "internal";
 
-        protected override SignatureTypeProvider? Customization
+        protected override TypeProvider? Customization
             => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), ExtendedResourceType, _operations, _extensionForChildResources);
 
-        protected override SignatureTypeProvider? PreviousContract
+        protected override TypeProvider? PreviousContract
             => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), ExtendedResourceType, _operations, _extensionForChildResources);
 
         /// <summary>

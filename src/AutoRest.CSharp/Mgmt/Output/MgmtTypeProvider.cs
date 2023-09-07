@@ -26,7 +26,7 @@ namespace AutoRest.CSharp.Mgmt.Output
     /// MgmtTypeProvider represents the information that corresponds to the generated class in the SDK that contains operations in it.
     /// This includes <see cref="Resource"/>, <see cref="ResourceCollection"/>, <see cref="ArmClientExtension"/>, <see cref="MgmtExtension"/>, <see cref="MgmtExtensionClient"/> and <see cref="MgmtExtensionWrapper"/>
     /// </summary>
-    internal abstract class MgmtTypeProvider : SignatureTypeProvider
+    internal abstract class MgmtTypeProvider : TypeProvider
     {
         protected bool IsArmCore { get; }
 
@@ -281,7 +281,7 @@ namespace AutoRest.CSharp.Mgmt.Output
         }
 
         protected IReadOnlyList<MethodSignature>? _methods;
-        public override IReadOnlyList<MethodSignature> Methods => _methods ?? EnsureMethods();
+        protected override IReadOnlyList<MethodSignature> MethodSignatures => _methods ?? EnsureMethods();
         private IReadOnlyList<MethodSignature> EnsureMethods() => AllOperations.Select(x => x.MethodSignature).Union(AllOperations.Select(x => x.MethodSignature.WithAsync(true))).ToList();
     }
 }

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Input;
 using AutoRest.CSharp.Mgmt.AutoRest;
@@ -12,6 +11,7 @@ using AutoRest.CSharp.Mgmt.Decorator;
 using AutoRest.CSharp.Mgmt.Models;
 using AutoRest.CSharp.Output.Models;
 using AutoRest.CSharp.Output.Models.Shared;
+using AutoRest.CSharp.Output.Models.Types;
 using AutoRest.CSharp.Utilities;
 
 namespace AutoRest.CSharp.Mgmt.Output
@@ -187,10 +187,10 @@ namespace AutoRest.CSharp.Mgmt.Output
             extensionClient => extensionClient.ExtendedResourceType,
             extensionClient => extensionClient);
 
-        protected override SignatureTypeProvider? Customization
+        protected override TypeProvider? Customization
             => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
 
-        protected override SignatureTypeProvider? PreviousContract
+        protected override TypeProvider? PreviousContract
             => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
     }
 }

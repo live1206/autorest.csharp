@@ -84,6 +84,8 @@ namespace AutoRest.CSharp.Mgmt.Generation
 
             WriteOperations();
 
+            WriteOverloadMethods();
+
             if (This.EnumerableInterfaces.Any())
                 WriteEnumerables();
         }
@@ -100,8 +102,11 @@ namespace AutoRest.CSharp.Mgmt.Generation
                 WriteMethod(clientOperation, false);
             }
             _writer.Line();
+        }
 
-            foreach (OverloadMethodSignature overloadMethod in This.MissingOverloadMethods)
+        protected virtual void WriteOverloadMethods()
+        {
+            foreach (OverloadMethodSignature overloadMethod in This.OverloadMethods)
             {
                 _writer.WriteMissingOverloadMethod(overloadMethod);
                 _writer.Line();
