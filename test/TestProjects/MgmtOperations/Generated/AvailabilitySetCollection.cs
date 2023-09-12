@@ -359,7 +359,7 @@ namespace MgmtOperations
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {
-            return await GetAsync(availabilitySetName, expand, default, cancellationToken);
+            return await GetAsync(availabilitySetName, expand, default, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace MgmtOperations
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<bool>> ExistsAsync(string availabilitySetName, string expand, CancellationToken cancellationToken)
         {
-            return await ExistsAsync(availabilitySetName, expand, default, cancellationToken);
+            return await ExistsAsync(availabilitySetName, expand, default, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>

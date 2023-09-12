@@ -187,10 +187,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             extensionClient => extensionClient.ExtendedResourceType,
             extensionClient => extensionClient);
 
-        protected override TypeProvider? Customization
-            => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
-
-        protected override TypeProvider? PreviousContract
-            => new MgmtExtension(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
+        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
+            => methods => new MgmtExtension(methods, _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
     }
 }

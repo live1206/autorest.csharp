@@ -496,10 +496,7 @@ namespace AutoRest.CSharp.Mgmt.Output
         public Parameter ResourceParameter => new(Name: "resource", Description: $"The client parameters to use in these operations.", Type: typeof(ArmResource), DefaultValue: null, ValidationType.None, null);
         public Parameter ResourceDataParameter => new(Name: "data", Description: $"The resource that is the target of operations.", Type: ResourceData.Type, DefaultValue: null, ValidationType.None, null);
 
-        protected override TypeProvider? Customization =>
-            new Resource(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
-
-        protected override TypeProvider? PreviousContract =>
-            new Resource(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
+        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
+            => methods => new Resource(methods, _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
     }
 }

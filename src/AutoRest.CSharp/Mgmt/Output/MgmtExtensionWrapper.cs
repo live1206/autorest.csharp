@@ -56,11 +56,8 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected override string DefaultAccessibility => "public";
 
-        protected override TypeProvider? Customization
-            => new MgmtExtensionWrapper(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), DefaultName, Description, Extensions, ExtensionClients);
-
-        protected override TypeProvider? PreviousContract
-            => new MgmtExtensionWrapper(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), DefaultName, Description, Extensions, ExtensionClients);
+        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
+            => methods => new MgmtExtensionWrapper(methods, DefaultName, Description, Extensions, ExtensionClients);
 
         protected override IEnumerable<MgmtClientOperation> EnsureClientOperations()
         {

@@ -46,7 +46,7 @@ namespace AutoRest.CSharp.Generation.Writers
 
                     foreach (OverloadMethodSignature overloadMethod in This.OverloadingMethods)
                     {
-                        _writer.WriteMissingOverloadMethod(overloadMethod);
+                        _writer.WriteMissingOverloadingMethod(overloadMethod);
                         _writer.Line();
                     }
                 }

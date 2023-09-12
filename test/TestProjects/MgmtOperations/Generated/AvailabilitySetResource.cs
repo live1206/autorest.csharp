@@ -756,7 +756,7 @@ namespace MgmtOperations
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual async Task<Response<AvailabilitySetResource>> GetAsync(string expand, CancellationToken cancellationToken)
         {
-            return await GetAsync(expand, default, cancellationToken);
+            return await GetAsync(expand, default, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>

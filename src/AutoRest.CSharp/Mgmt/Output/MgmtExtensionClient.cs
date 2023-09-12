@@ -155,11 +155,8 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         protected override string DefaultAccessibility => "internal";
 
-        protected override TypeProvider? Customization
-            => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.Customization), ExtendedResourceType, _operations, _extensionForChildResources);
-
-        protected override TypeProvider? PreviousContract
-            => new MgmtExtensionClient(PopulateMethodsFromCompilation(MgmtContext.Context.SourceInputModel?.PreviousContract), ExtendedResourceType, _operations, _extensionForChildResources);
+        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
+            => methods => new MgmtExtensionClient(methods, ExtendedResourceType, _operations, _extensionForChildResources);
 
         /// <summary>
         /// Construct a key for overload of this method signature.

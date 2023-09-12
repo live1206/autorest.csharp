@@ -15,14 +15,15 @@ namespace AutoRest.CSharp.Generation.Writers
 {
     internal static class BreakingChangeWriter
     {
-        public static void WriteMissingOverloadMethod(this CodeWriter writer, OverloadMethodSignature overloadMethod)
+        public static void WriteMissingOverloadingMethod(this CodeWriter writer, OverloadMethodSignature overloadMethod)
         {
             writer.WriteXmlDocumentationSummary(overloadMethod.Description);
             writer.Line($"[{typeof(EditorBrowsableAttribute)}({typeof(EditorBrowsableState)}.{nameof(EditorBrowsableState.Never)})]");
             using (writer.WriteMethodDeclaration(overloadMethod.PreviousMethodSignature))
             {
                 writer.Line();
-                var awaitOperation = overloadMethod.PreviousMethodSignature.Modifiers.HasFlag(MethodSignatureModifiers.Async) ? "await " : "";
+                var isAwait = overloadMethod.PreviousMethodSignature.Modifiers.HasFlag(MethodSignatureModifiers.Async);
+                var awaitOperation = isAwait ? "await " : "";
                 writer.Append($"return {awaitOperation}{overloadMethod.MethodSignature.Name}(");
                 var set = overloadMethod.MissingParameters.ToHashSet(new ParameterComparer());
                 foreach (var parameter in overloadMethod.MethodSignature.Parameters)
@@ -37,7 +38,14 @@ namespace AutoRest.CSharp.Generation.Writers
                     }
                 }
                 writer.RemoveTrailingComma();
-                writer.Line($");");
+                if (isAwait)
+                {
+                    writer.Line($").ConfigureAwait(false);");
+                }
+                else
+                {
+                    writer.Line($");");
+                }
             }
         }
     }
