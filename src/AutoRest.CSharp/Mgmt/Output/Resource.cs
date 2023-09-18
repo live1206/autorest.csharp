@@ -135,24 +135,6 @@ namespace AutoRest.CSharp.Mgmt.Output
             : this(operationSet, operations, resourceName, resourceType, resourceData, ResourcePosition)
         { }
 
-        private Resource(IReadOnlyList<MethodSignature> methods, Parameter[] armClientCtorParameters, IEnumerable<Operation> clientOperations, OperationSet operationSet, string resourceName, ResourceTypeSegment resourceType, ResourceData resourceData)
-            : base(resourceName)
-        {
-            _armClientCtorParameters = armClientCtorParameters;
-            OperationSet = operationSet;
-            ResourceType = resourceType;
-            ResourceData = resourceData;
-
-            if (OperationSet.TryGetSingletonResourceSuffix(out var singletonResourceIdSuffix))
-                SingletonResourceIdSuffix = singletonResourceIdSuffix;
-
-            _clientOperations = clientOperations;
-            IsById = OperationSet.IsById;
-            Position = ResourcePosition;
-
-            _methods = methods;
-        }
-
         private static IEnumerable<Operation> GetClientOperations(OperationSet operationSet, IEnumerable<Operation> operations)
             => operations.Concat(operationSet.Where(operation => !MethodToExclude.Contains(operation.GetHttpMethod())));
 
@@ -495,8 +477,5 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         public Parameter ResourceParameter => new(Name: "resource", Description: $"The client parameters to use in these operations.", Type: typeof(ArmResource), DefaultValue: null, ValidationType.None, null);
         public Parameter ResourceDataParameter => new(Name: "data", Description: $"The resource that is the target of operations.", Type: ResourceData.Type, DefaultValue: null, ValidationType.None, null);
-
-        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
-            => methods => new Resource(methods, _armClientCtorParameters, _clientOperations, OperationSet, ResourceName, ResourceType, ResourceData);
     }
 }

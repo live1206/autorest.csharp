@@ -2,12 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Generation.Writers;
@@ -16,13 +13,15 @@ using AutoRest.CSharp.Mgmt.AutoRest;
 using AutoRest.CSharp.Mgmt.Decorator;
 using AutoRest.CSharp.Output.Builders;
 using AutoRest.CSharp.Output.Models.Requests;
+using AutoRest.CSharp.Output.Models.Serialization;
 using AutoRest.CSharp.Utilities;
 using Microsoft.CodeAnalysis;
 
 namespace AutoRest.CSharp.Output.Models.Shared
 {
-    internal record Parameter(string Name, string? Description, CSharpType Type, Constant? DefaultValue = null, ValidationType Validation = ValidationType.None, FormattableString? Initializer = null, bool IsApiVersionParameter = false, bool IsResourceIdentifier = false, bool SkipUrlEncoding = false, RequestLocation RequestLocation = RequestLocation.None, bool IsPropertyBag = false)
+    internal record Parameter(string Name, string? Description, CSharpType Type, Constant? DefaultValue = null, ValidationType Validation = ValidationType.None, FormattableString? Initializer = null, bool IsApiVersionParameter = false, bool IsResourceIdentifier = false, bool SkipUrlEncoding = false, RequestLocation RequestLocation = RequestLocation.None, SerializationFormat SerializationFormat = SerializationFormat.Default, bool IsPropertyBag = false)
     {
+        public static IEqualityComparer<Parameter> TypeAndNameEqualityComparer = new ParameterTypeAndNameEqualityComparer();
         public FormattableString? FormattableDescription => Description is null ? (FormattableString?)null : $"{Description}";
         public CSharpAttribute[] Attributes { get; init; } = Array.Empty<CSharpAttribute>();
         public bool IsOptionalInSignature => DefaultValue != null;
@@ -96,7 +95,8 @@ namespace AutoRest.CSharp.Output.Models.Shared
                 IsApiVersionParameter: operationParameter.IsApiVersion,
                 IsResourceIdentifier: operationParameter.IsResourceParameter,
                 SkipUrlEncoding: skipUrlEncoding,
-                RequestLocation: requestLocation);
+                RequestLocation: requestLocation,
+                SerializationFormat: operationParameter.SerializationFormat);
         }
 
         private static Constant? GetDefaultValue(InputParameter operationParameter, TypeFactory typeFactory) => operationParameter switch
@@ -275,6 +275,30 @@ namespace AutoRest.CSharp.Output.Models.Shared
 
             public int GetHashCode([DisallowNull] Parameter obj) => obj.Type.GetHashCode();
         }
+
+        private class ParameterTypeAndNameEqualityComparer : IEqualityComparer<Parameter>
+        {
+            public bool Equals(Parameter? x, Parameter? y)
+            {
+                if (Object.ReferenceEquals(x, y))
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
+
+                var result = x.Type.EqualsByName(y.Type) && x.Name == y.Name;
+                return result;
+            }
+
+            public int GetHashCode([DisallowNull] Parameter obj)
+            {
+                return HashCode.Combine(obj.Type, obj.Name);
+            }
+        }
     }
 
     internal enum ValidationType
@@ -282,43 +306,5 @@ namespace AutoRest.CSharp.Output.Models.Shared
         None,
         AssertNotNull,
         AssertNotNullOrEmpty
-    }
-
-    internal class ParameterComparer : IEqualityComparer<Parameter>
-    {
-        public bool Equals(Parameter? x, Parameter? y)
-        {
-            if (Object.ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
-            var result = x.Type.EqualsBySystemType(y.Type) && x.Name == y.Name;
-            return result;
-        }
-
-        private bool CompareType(CSharpType? x, CSharpType? y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (x is null || y is null)
-            {
-                return false;
-            }
-            return x.GetType().Equals(y.GetType());
-        }
-
-        public int GetHashCode([DisallowNull] Parameter obj)
-        {
-            return HashCode.Combine(obj.Type, obj.Name);
-        }
     }
 }

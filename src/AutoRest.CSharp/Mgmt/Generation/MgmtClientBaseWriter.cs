@@ -106,9 +106,9 @@ namespace AutoRest.CSharp.Mgmt.Generation
 
         protected virtual void WriteOverloadingMethods()
         {
-            foreach (OverloadMethodSignature overloadMethod in This.OverloadingMethods)
+            foreach (OverloadMethodSignature overloadMethod in This.SignatureTypeProvider.OverloadingMethods)
             {
-                _writer.WriteMissingOverloadingMethod(overloadMethod);
+                _writer.WriteOverloadMethod(overloadMethod);
                 _writer.Line();
             }
         }

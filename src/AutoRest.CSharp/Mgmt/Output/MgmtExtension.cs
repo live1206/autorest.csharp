@@ -36,20 +36,6 @@ namespace AutoRest.CSharp.Mgmt.Output
             ChildResources = !Configuration.MgmtConfiguration.IsArmCore || ArmCoreType.Namespace != MgmtContext.Context.DefaultNamespace ? base.ChildResources : Enumerable.Empty<Resource>();
         }
 
-        private MgmtExtension(IReadOnlyList<MethodSignature> methods, IEnumerable<Operation> allRawOperations, IEnumerable<MgmtExtensionClient> extensionClients, Type armCoreType, string defaultName, string defaultNamespace, FormattableString description, IEnumerable<Resource> childResources)
-            : base(armCoreType.Name)
-        {
-            _methods = methods;
-            _allRawOperations = allRawOperations;
-            _extensionClients = extensionClients; // this property is populated later
-            ArmCoreType = armCoreType;
-            DefaultName = defaultName;
-            DefaultNamespace = defaultNamespace;
-            Description = description;
-            ArmCoreNamespace = ArmCoreType.Namespace!;
-            ChildResources = childResources;
-        }
-
         protected override ConstructorSignature? EnsureMockingCtor()
         {
             return IsArmCore ? null : base.EnsureMockingCtor();
@@ -186,8 +172,5 @@ namespace AutoRest.CSharp.Mgmt.Output
         private Dictionary<CSharpType, MgmtExtensionClient> Cache => _cache ??= _extensionClients.ToDictionary(
             extensionClient => extensionClient.ExtendedResourceType,
             extensionClient => extensionClient);
-
-        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
-            => methods => new MgmtExtension(methods, _allRawOperations, _extensionClients, ArmCoreType, DefaultName, DefaultNamespace, Description, ChildResources);
     }
 }

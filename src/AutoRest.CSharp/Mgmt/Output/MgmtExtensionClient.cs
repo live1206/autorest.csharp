@@ -35,12 +35,6 @@ namespace AutoRest.CSharp.Mgmt.Output
             DefaultName = $"{ResourceName}ExtensionClient";
         }
 
-        public MgmtExtensionClient(IReadOnlyList<MethodSignature> methods, CSharpType resourceType, IEnumerable<MgmtClientOperation> operations, MgmtExtension? extensionForChildResources)
-            : this(resourceType, operations, extensionForChildResources)
-        {
-            _methods = methods;
-        }
-
         public override bool IsInitializedByProperties => true;
 
         public override bool HasChildResourceGetMethods => false;
@@ -154,9 +148,6 @@ namespace AutoRest.CSharp.Mgmt.Output
         public override FormattableString Description => _description ??= $"A class to add extension methods to {ResourceName}.";
 
         protected override string DefaultAccessibility => "internal";
-
-        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
-            => methods => new MgmtExtensionClient(methods, ExtendedResourceType, _operations, _extensionForChildResources);
 
         /// <summary>
         /// Construct a key for overload of this method signature.

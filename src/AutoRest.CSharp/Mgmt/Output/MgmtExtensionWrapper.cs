@@ -38,16 +38,6 @@ namespace AutoRest.CSharp.Mgmt.Output
             ExtensionClients = extensionClients;
         }
 
-        private MgmtExtensionWrapper(IReadOnlyList<MethodSignature> methods, string defaultName, FormattableString description, IEnumerable<MgmtExtension> extensions, IEnumerable<MgmtExtensionClient> extensionClients)
-            : base(MgmtContext.RPName)
-        {
-            _methods = methods;
-            DefaultName = defaultName;
-            Description = description;
-            Extensions = extensions;
-            ExtensionClients = extensionClients;
-        }
-
         public override CSharpType? BaseType => null;
 
         public override FormattableString Description { get; }
@@ -55,9 +45,6 @@ namespace AutoRest.CSharp.Mgmt.Output
         protected override string DefaultName { get; }
 
         protected override string DefaultAccessibility => "public";
-
-        protected override Func<IReadOnlyList<MethodSignature>, TypeProvider>? InstantiateTypeProvider
-            => methods => new MgmtExtensionWrapper(methods, DefaultName, Description, Extensions, ExtensionClients);
 
         protected override IEnumerable<MgmtClientOperation> EnsureClientOperations()
         {

@@ -280,8 +280,8 @@ namespace AutoRest.CSharp.Mgmt.Output
             return uniqueSets;
         }
 
-        protected IReadOnlyList<MethodSignature>? _methods;
-        protected override IReadOnlyList<MethodSignature> MethodSignatures => _methods ?? EnsureMethods();
-        private IReadOnlyList<MethodSignature> EnsureMethods() => AllOperations.Select(x => x.MethodSignature).Union(AllOperations.Select(x => x.MethodSignature.WithAsync(true))).ToList();
+        private SignatureTypeProvider? _signatureTypeProvider;
+        public override SignatureTypeProvider SignatureTypeProvider =>
+            _signatureTypeProvider ??= new SignatureTypeProvider(AllOperations.Select(x => x.MethodSignature).Union(AllOperations.Select(x => x.MethodSignature.WithAsync(true))).ToList(), _sourceInputModel, DefaultNamespace, DefaultName);
     }
 }
