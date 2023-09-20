@@ -39,7 +39,7 @@ namespace AutoRest.CSharp.Mgmt.Output
             IsStatic = !IsArmCore && BaseType is null;
         }
 
-        protected virtual string IdParamDescription => $"The identifier of the resource that is the target of operations.";
+        protected virtual FormattableString IdParamDescription => $"The identifier of the resource that is the target of operations.";
         public Parameter ResourceIdentifierParameter => new(Name: "id", Description: IdParamDescription, Type: typeof(ResourceIdentifier), DefaultValue: null, ValidationType.None, null);
         public static Parameter ArmClientParameter => new(Name: "client", Description: $"The client parameters to use in these operations.", Type: typeof(ArmClient), DefaultValue: null, ValidationType.None, null);
 
@@ -203,14 +203,14 @@ namespace AutoRest.CSharp.Mgmt.Output
         private IEnumerable<MgmtClientOperation>? _shouldNotBeUsedForOutput;
         private IEnumerable<MgmtClientOperation> ShouldNotBeUsedForOutput([CallerMemberName] string caller = "")
         {
-            Debug.Assert(caller == nameof(AllOperations) || caller == nameof(SignatureTypeProvider), "This should not be used for output");
+            Debug.Assert(caller == nameof(AllOperations) || caller == nameof(SignatureType), "This should not be used for output");
             return _shouldNotBeUsedForOutput ??= EnsureAllOperations();
         }
         protected virtual IEnumerable<MgmtClientOperation> EnsureAllOperations() => ClientOperations;
 
         private IReadOnlyList<MgmtClientOperation>? _allOperations;
         public IReadOnlyList<MgmtClientOperation> AllOperations
-            => _allOperations ??= ShouldNotBeUsedForOutput().Where(x => !SignatureTypeProvider.MethodsToSkip.Contains(x.MethodSignature)).ToList();
+            => _allOperations ??= ShouldNotBeUsedForOutput().Where(x => !SignatureType.MethodsToSkip.Contains(x.MethodSignature)).ToList();
 
         public virtual ResourceTypeSegment GetBranchResourceType(RequestPath branch)
         {
@@ -291,8 +291,8 @@ namespace AutoRest.CSharp.Mgmt.Output
             return uniqueSets;
         }
 
-        private SignatureTypeProvider? _signatureTypeProvider;
-        public override SignatureTypeProvider SignatureTypeProvider =>
-            _signatureTypeProvider ??= new SignatureTypeProvider(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature).Union(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature.WithAsync(true))).ToList(), _sourceInputModel, DefaultNamespace, DefaultName);
+        private SignatureType? _signatureType;
+        public override SignatureType SignatureType =>
+            _signatureType ??= new SignatureType(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature).Union(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature.WithAsync(true))).ToList(), _sourceInputModel, DefaultNamespace, DefaultName);
     }
 }

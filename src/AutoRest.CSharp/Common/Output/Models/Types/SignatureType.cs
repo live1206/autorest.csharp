@@ -13,34 +13,34 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace AutoRest.CSharp.Output.Models.Types
 {
-    internal class SignatureTypeProvider
+    internal class SignatureType
     {
         private readonly string _defaultNamespace;
         private readonly string _defaultName;
-        private readonly SignatureTypeProvider? _customization;
-        private readonly SignatureTypeProvider? _previousContract;
+        private readonly SignatureType? _customization;
+        private readonly SignatureType? _previousContract;
 
         // Missing means the method with the same name is missing from the current contract
-        // Updated means the method with the same name is updated in the current contract, and the list contains the previous method and current methods including overloading ones
+        // Updated means the method with the same name is updated in the current contract, and the list contains the previous method and current methods including overload ones
         private readonly (IReadOnlyList<MethodSignature> Missing, IReadOnlyList<(List<MethodSignature> Current, MethodSignature Previous)> Updated)? _methodChangeset;
 
-        public SignatureTypeProvider(IReadOnlyList<MethodSignature> methods, SourceInputModel? sourceInputModel, string defaultNamespace, string defaultName)
+        public SignatureType(IReadOnlyList<MethodSignature> methods, SourceInputModel? sourceInputModel, string defaultNamespace, string defaultName)
         {
             Methods = methods;
             _defaultNamespace = defaultNamespace;
             _defaultName = defaultName;
             if (sourceInputModel is not null)
             {
-                _customization = new SignatureTypeProvider(PopulateMethodsFromCompilation(sourceInputModel?.Customization), null, defaultNamespace, defaultName);
-                _previousContract = new SignatureTypeProvider(PopulateMethodsFromCompilation(sourceInputModel?.PreviousContract), null, defaultNamespace, defaultName);
+                _customization = new SignatureType(PopulateMethodsFromCompilation(sourceInputModel?.Customization), null, defaultNamespace, defaultName);
+                _previousContract = new SignatureType(PopulateMethodsFromCompilation(sourceInputModel?.PreviousContract), null, defaultNamespace, defaultName);
                 _methodChangeset ??= CompareMethods(Methods.Union(_customization?.Methods ?? Array.Empty<MethodSignature>(), MethodSignature.ParameterAndReturnTypeEqualityComparer), _previousContract?.Methods);
             }
         }
 
-        private IReadOnlyList<OverloadMethodSignature>? _overloadingMethods;
-        public IReadOnlyList<OverloadMethodSignature> OverloadingMethods => _overloadingMethods ??= EnsureOverloadingMethods();
+        private IReadOnlyList<OverloadMethodSignature>? _overloadMethods;
+        public IReadOnlyList<OverloadMethodSignature> OverloadMethods => _overloadMethods ??= EnsureOverloadMethods();
 
-        private IReadOnlyList<OverloadMethodSignature> EnsureOverloadingMethods()
+        private IReadOnlyList<OverloadMethodSignature> EnsureOverloadMethods()
         {
             var overloadMethods = new List<OverloadMethodSignature>();
             var updated = _methodChangeset?.Updated;
@@ -53,7 +53,7 @@ namespace AutoRest.CSharp.Output.Models.Types
             {
                 if (TryGetPreviousMethodWithLessOptionalParameters(current, previous, out var currentMethodToCall, out var missingParameters))
                 {
-                    overloadMethods.Add(new OverloadMethodSignature(currentMethodToCall, previous.DisableOptionalParameters(), missingParameters, previous.FormattableDescription, true));
+                    overloadMethods.Add(new OverloadMethodSignature(currentMethodToCall, previous.DisableOptionalParameters(), missingParameters, previous.Description, true));
                 }
             }
             return overloadMethods;
@@ -198,7 +198,7 @@ namespace AutoRest.CSharp.Output.Models.Types
                         parameters.Add(methodParameter);
                     }
                 }
-                result.Add(new MethodSignature(method.Name, null, description, MapModifiers(method), returnType, null, parameters));
+                result.Add(new MethodSignature(method.Name, null, $"{description}", MapModifiers(method), returnType, null, parameters));
             }
             return result;
         }

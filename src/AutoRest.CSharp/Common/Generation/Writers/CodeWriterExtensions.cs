@@ -271,7 +271,7 @@ namespace AutoRest.CSharp.Generation.Writers
         public static CodeWriter WriteMethodDocumentation(this CodeWriter writer, MethodSignatureBase methodBase, FormattableString? summaryText = null)
         {
             return writer
-                .WriteXmlDocumentationSummary(summaryText ?? $"{methodBase.SummaryText}")
+                .WriteXmlDocumentationSummary(summaryText ?? methodBase.SummaryText)
                 .WriteMethodDocumentationSignature(methodBase);
         }
 
@@ -629,7 +629,7 @@ namespace AutoRest.CSharp.Generation.Writers
 
         public static IDisposable WriteCommonMethodWithoutValidation(this CodeWriter writer, MethodSignature signature, FormattableString? returnDescription, bool isAsync, bool isPublicType)
         {
-            writer.WriteXmlDocumentationSummary(signature.FormattableDescription);
+            writer.WriteXmlDocumentationSummary(signature.Description);
             writer.WriteXmlDocumentationParameters(signature.Parameters);
             if (isPublicType)
             {
@@ -665,7 +665,10 @@ namespace AutoRest.CSharp.Generation.Writers
         public static void WriteOverloadMethod(this CodeWriter writer, OverloadMethodSignature overloadMethod)
         {
             writer.WriteXmlDocumentationSummary(overloadMethod.Description);
-            writer.Line($"[{typeof(EditorBrowsableAttribute)}({typeof(EditorBrowsableState)}.{nameof(EditorBrowsableState.Never)})]");
+            if (overloadMethod.IsHiddenFromUser)
+            {
+                writer.Line($"[{typeof(EditorBrowsableAttribute)}({typeof(EditorBrowsableState)}.{nameof(EditorBrowsableState.Never)})]");
+            }
             using (writer.WriteMethodDeclaration(overloadMethod.PreviousMethodSignature))
             {
                 writer.Line();
