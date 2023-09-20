@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Input;
@@ -197,9 +199,18 @@ namespace AutoRest.CSharp.Mgmt.Output
         public IEnumerable<MgmtClientOperation> ClientOperations => _clientOperations ??= EnsureClientOperations();
         protected abstract IEnumerable<MgmtClientOperation> EnsureClientOperations();
 
-        private IEnumerable<MgmtClientOperation>? _allOperations;
-        public IEnumerable<MgmtClientOperation> AllOperations => _allOperations ??= EnsureAllOperations();
+        // TODO: Remove this intermediate state once we generate it before output types
+        private IEnumerable<MgmtClientOperation>? _shouldNotBeUsedForOutput;
+        private IEnumerable<MgmtClientOperation> ShouldNotBeUsedForOutput([CallerMemberName] string caller = "")
+        {
+            Debug.Assert(caller == nameof(AllOperations) || caller == nameof(SignatureTypeProvider), "This should not be used for output");
+            return _shouldNotBeUsedForOutput ??= EnsureAllOperations();
+        }
         protected virtual IEnumerable<MgmtClientOperation> EnsureAllOperations() => ClientOperations;
+
+        private IReadOnlyList<MgmtClientOperation>? _allOperations;
+        public IReadOnlyList<MgmtClientOperation> AllOperations
+            => _allOperations ??= ShouldNotBeUsedForOutput().Where(x => !SignatureTypeProvider.MethodsToSkip.Contains(x.MethodSignature)).ToList();
 
         public virtual ResourceTypeSegment GetBranchResourceType(RequestPath branch)
         {
@@ -282,6 +293,6 @@ namespace AutoRest.CSharp.Mgmt.Output
 
         private SignatureTypeProvider? _signatureTypeProvider;
         public override SignatureTypeProvider SignatureTypeProvider =>
-            _signatureTypeProvider ??= new SignatureTypeProvider(AllOperations.Select(x => x.MethodSignature).Union(AllOperations.Select(x => x.MethodSignature.WithAsync(true))).ToList(), _sourceInputModel, DefaultNamespace, DefaultName);
+            _signatureTypeProvider ??= new SignatureTypeProvider(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature).Union(ShouldNotBeUsedForOutput().Select(x => x.MethodSignature.WithAsync(true))).ToList(), _sourceInputModel, DefaultNamespace, DefaultName);
     }
 }
