@@ -159,6 +159,11 @@ namespace AutoRest.CSharp.Input.Source
                 {
                     return await GeneratedCodeWorkspace.CreatePreviousContractFromDll(Path.Combine(nugetFolder, $"{Configuration.Namespace}.xml"), fullPath);
                 }
+                else
+                {
+                    throw new InvalidOperationException($"Can't find Baseline contract assembly ({baselineVersion}) from Nuget Global Package Folder at {fullPath}. " +
+                        $"Please make sure the baseline nuget package has been installed properly");
+                }
             }
             return null;
         }

@@ -30,7 +30,7 @@ function New-Local-Test-Nuget-Source([string]$workFolder, [string]$nugetSourceNa
   dotnet nuget add source $SourceFolder --name $nugetSourceName
 
   dotnet nuget push $packageFolder\MgmtCustomizations.1.0.0-beta.20240102.1.nupkg -s $nugetSourceName
-  dotnet add $projFile package MgmtCustomizations -s $nugetSourceName -v 1.0.0-beta.20240102.1 
+  dotnet add $projFile package MgmtCustomizations -s $sourceFolder -v 1.0.0-beta.20240102.1 
 
 }
 
