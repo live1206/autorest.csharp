@@ -2,6 +2,7 @@
 param($filter, [switch]$continue, [switch]$reset, [switch]$noBuild, [switch]$fast, [switch]$debug, [String[]]$Exclude = "SmokeTests", $parallel = 5)
 
 Import-Module "$PSScriptRoot\Generation.psm1" -DisableNameChecking -Force;
+Import-Module "$PSScriptRoot\..\test\scripts\LocalTestNugetSource.psm1" -DisableNameChecking -Force;
 
 $ErrorActionPreference = 'Stop'
 
@@ -382,6 +383,13 @@ if (!$noBuild) {
     Invoke-TypeSpecSetup
 }
 
+$localTestNugetSourceCreated = $false
+$localTestNugetWorkFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([string][System.Guid]::NewGuid())
+# Only MgmtCustomizations project needs the LocalNugetServer now
+if($keys -contains "MgmtCustomizations"){
+    New-Local-Test-Nuget-Source $localTestNugetWorkFolder
+    $localTestNugetSourceCreated = $true
+}
 
 $keys | % { $swaggerDefinitions[$_] } | ForEach-Object -Parallel {
     if ($_.output -ne $null) {
@@ -403,3 +411,7 @@ $keys | % { $tspDefinitions[$_] } | ForEach-Object -Parallel {
         Invoke-TypeSpec $_.output $_.projectName $_.mainFile $_.arguments $using:sharedSource $using:fast $using:debug;
     }
 } -ThrottleLimit $parallel
+
+if($localTestNugetSourceCreated){
+    Remove-Local-Test-Nuget-Source $localTestNugetWorkFolder
+}

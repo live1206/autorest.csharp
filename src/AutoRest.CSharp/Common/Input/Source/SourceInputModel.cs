@@ -160,15 +160,6 @@ namespace AutoRest.CSharp.Input.Source
                     return await GeneratedCodeWorkspace.CreatePreviousContractFromDll(Path.Combine(nugetFolder, $"{Configuration.Namespace}.xml"), fullPath);
                 }
             }
-
-            // fallback for testing purpose
-            var baselinePath = Path.GetFullPath(Path.Combine(Configuration.AbsoluteProjectFolder, "..", "..", "BaselineContract", Configuration.Namespace));
-            fullPath = Path.Combine(baselinePath, $"{Configuration.Namespace}.dll");
-            if (File.Exists(fullPath))
-            {
-                return await GeneratedCodeWorkspace.CreatePreviousContractFromDll(Path.Combine(baselinePath, $"{Configuration.Namespace}.xml"), fullPath);
-            }
-
             return null;
         }
     }

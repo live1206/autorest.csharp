@@ -4,11 +4,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Nullable>annotations</Nullable>
+    <BaselineVersion>1.0.0-beta.20240102.1</BaselineVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <IncludeManagementSharedCode>true</IncludeManagementSharedCode>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="$(PackageId)" Version="[$(BaselineVersion)]" />
+    <PackageReference Include="Microsoft.DotNet.ApiCompat" PrivateAssets="all" Version="5.0.0-beta.20467.1" />
+    <ResolvedMatchingContract Include="$(NuGetPackageRoot)\$(PackageId.ToLower())\$(BaselineVersion)\lib\$([MSBuild]::ValueOrDefault('$(ApiCompatBaselineTargetFramework)', '$(TargetFramework)'))\$(TargetFileName)">
+      <DependencyPaths>@(_ReferencePathDirectories->Distinct(), ',')</DependencyPaths>
+    </ResolvedMatchingContract>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.ResourceManager" />
