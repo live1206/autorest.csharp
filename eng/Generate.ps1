@@ -383,7 +383,6 @@ if (!$noBuild) {
     Invoke-TypeSpecSetup
 }
 
-# initialize test local nuget source if there is nugetPacakge filename starts with a project name in $keys
 [hashtable]$testPackagesToInstall = @{};
 $localTestNugetSourceFolder = Join-Path $repoRoot 'test/NugetPackages'
 foreach($key in $keys){
