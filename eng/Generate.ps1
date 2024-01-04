@@ -383,12 +383,22 @@ if (!$noBuild) {
     Invoke-TypeSpecSetup
 }
 
-$localTestNugetSourceCreated = $false
-$localTestNugetWorkFolder = Join-Path ([System.IO.Path]::GetTempPath()) ([string][System.Guid]::NewGuid())
-# Only MgmtCustomizations project needs the LocalNugetServer now
-if($keys -contains "MgmtCustomizations"){
-    New-Local-Test-Nuget-Source $localTestNugetWorkFolder
-    $localTestNugetSourceCreated = $true
+# initialize test local nuget source if there is nugetPacakge filename starts with a project name in $keys
+[hashtable]$testPackagesToInstall = @{};
+$localTestNugetSourceFolder = Join-Path $repoRoot 'test/NugetPackages'
+foreach($key in $keys){
+    foreach($nugetPackageFilename in (Get-ChildItem -Path $localTestNugetSourceFolder | Select-Object -ExpandProperty Name)){
+        $nameForRegex = [Regex]::Escape($key);
+        if ($nugetPackageFilename -match "^($nameForRegex)\.([\.\d\w\-]+)\.nupkg$") {
+            $name = $matches[1]
+            $version = $matches[2]
+            $testPackagesToInstall[$name] = $version;
+        }
+    }
+}
+
+if($testPackagesToInstall.Count -gt 0){
+    Install-Test-Nuget-Packages $testPackagesToInstall
 }
 
 $keys | % { $swaggerDefinitions[$_] } | ForEach-Object -Parallel {
@@ -411,7 +421,3 @@ $keys | % { $tspDefinitions[$_] } | ForEach-Object -Parallel {
         Invoke-TypeSpec $_.output $_.projectName $_.mainFile $_.arguments $using:sharedSource $using:fast $using:debug;
     }
 } -ThrottleLimit $parallel
-
-if($localTestNugetSourceCreated){
-    Remove-Local-Test-Nuget-Source $localTestNugetWorkFolder
-}

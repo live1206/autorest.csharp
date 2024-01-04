@@ -161,7 +161,7 @@ namespace AutoRest.CSharp.Input.Source
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Can't find Baseline contract assembly ({baselineVersion}) from Nuget Global Package Folder at {fullPath}. " +
+                    throw new InvalidOperationException($"Can't find Baseline contract assembly ({Configuration.Namespace}@{baselineVersion}) from Nuget Global Package Folder at {fullPath}. " +
                         $"Please make sure the baseline nuget package has been installed properly");
                 }
             }
