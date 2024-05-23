@@ -400,7 +400,7 @@ namespace AutoRest.CSharp.Output.Models.Types
             var discriminatorPropertyName = InputModel.DiscriminatorPropertyName;
             if (discriminatorPropertyName is null)
             {
-                discriminatorPropertyName = InputModel.AllBaseModels.FirstOrDefault(m => m.DiscriminatorPropertyName != null)?.DiscriminatorPropertyName;
+                discriminatorPropertyName = InputModel.AllBaseModels().FirstOrDefault(m => m.DiscriminatorPropertyName != null)?.DiscriminatorPropertyName;
             }
             if (discriminatorPropertyName is null)
             {
@@ -598,7 +598,7 @@ namespace AutoRest.CSharp.Output.Models.Types
         {
             yield return InputModel;
 
-            foreach (var model in InputModel.AllBaseModels)
+            foreach (var model in InputModel.AllBaseModels())
             {
                 yield return model;
             }
@@ -615,23 +615,23 @@ namespace AutoRest.CSharp.Output.Models.Types
                 return baseType;
             }
 
-            InputModelType? selectedSchema = null;
+            InputModelType? selectedModel = null;
 
-            foreach (var objectSchema in InputModel.ImmediateBaseModels)
+            foreach (var inputModel in InputModel.ImmediateBaseModels())
             {
                 // Take first schema or the one with discriminator
-                selectedSchema ??= objectSchema;
+                selectedModel ??= inputModel;
 
-                if (objectSchema.DiscriminatorPropertyName != null)
+                if (inputModel.DiscriminatorPropertyName != null)
                 {
-                    selectedSchema = objectSchema;
+                    selectedModel = inputModel;
                     break;
                 }
             }
 
-            if (selectedSchema != null)
+            if (selectedModel != null)
             {
-                CSharpType type = _typeFactory.CreateType(selectedSchema);
+                CSharpType type = _typeFactory.CreateType(selectedModel);
                 Debug.Assert(!type.IsFrameworkType);
                 return type;
             }

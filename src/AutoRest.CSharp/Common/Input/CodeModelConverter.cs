@@ -352,7 +352,7 @@ namespace AutoRest.CSharp.Common.Input
                 IsNullable: false,
                 IsBasePolyType: IsBasePolyType(schema))
             {
-                AllBaseModels = schema.Parents?.All is null ? Array.Empty<InputModelType>() : schema.Parents.All.OfType<ObjectSchema>().Select(GetOrCreateModel).ToArray(),
+                CompositionModels = compositeSchemas is not null ? compositeSchemas.Select(GetOrCreateModel).ToList() : Array.Empty<InputModelType>(),
                 Serialization = GetSerialization(schema, usage),
                 SpecName = schema.Language.Default.SerializedName
             };

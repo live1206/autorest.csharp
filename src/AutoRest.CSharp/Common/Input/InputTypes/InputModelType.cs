@@ -24,12 +24,25 @@ namespace AutoRest.CSharp.Common.Input
         /// <summary>
         /// Types provided as immediate parents in spec that aren't base model
         /// </summary>
-        public IEnumerable<InputModelType> CompositionModels => AllBaseModels.Where(x => x != BaseModel && x.Name != "AzureResourceBase");
+        public IEnumerable<InputModelType> CompositionModels { get; init; } = Array.Empty<InputModelType>();
 
-        public IReadOnlyList<InputModelType> AllBaseModels { get; init; } = Array.Empty<InputModelType>();
+        internal IReadOnlyList<InputModelType> AllBaseModels()
+        {
+            return Array.Empty<InputModelType>();
+        }
 
-        // TODO: remove the workaround for immediate base models
-        public IEnumerable<InputModelType> ImmediateBaseModels => AllBaseModels.Where(x => x.Name != "AzureResourceBase");
+        internal IEnumerable<InputModelType> ImmediateBaseModels()
+        {
+            if (BaseModel is not null)
+            {
+                yield return BaseModel;
+            }
+
+            foreach (var model in CompositionModels)
+            {
+                yield return model;
+            }
+        }
 
         public InputModelType? BaseModel { get; private set; } = BaseModel;
         /** In some case, its base model will have a propety whose type is the model, in tspCodeModel.json, the property type is a reference,
