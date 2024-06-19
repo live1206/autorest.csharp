@@ -7,22 +7,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
-using static AutoRest.CSharp.Input.MgmtConfiguration;
 
 namespace AutoRest.CSharp.Mgmt.Models
 {
     internal class NameTransformer
     {
         private record AppliedCache(NameInfo NewName, List<ApplyDetailStep> AppliedDetailSteps);
-        public record ApplyDetailStep(string MappingKey, AcronymMappingTarget MappingValue, NameInfo NewName);
+        public record ApplyDetailStep(string MappingKey, NameInfo NewName);
 
         private static NameTransformer? _instance;
-        public static NameTransformer Instance => _instance ??= new NameTransformer(Configuration.MgmtConfiguration.AcronymMapping);
+        public static NameTransformer Instance => _instance ??= new NameTransformer();
 
-        private IReadOnlyDictionary<string, AcronymMappingTarget> _acronymMapping;
+        private IReadOnlyDictionary<string, (string PropertyName, string? ParameterName)> _acronymMapping =
+            new Dictionary<string, (string PropertyName, string? ParameterName)>()
+            {
+                { "CPU", ("Cpu", null) },
+                { "CPUs", ("Cpus", null) },
+                { "Os", ("OS", null) },
+                { "Ip", ("IP", null) },
+                { "Ips", ("IPs", "ips") },
+                { "ID", ("id", null) },
+                { "IDs", ("ids", null) },
+                { "VMM", ("Vmm", null) },
+                { "VM", ("Vm", null) },
+                { "VMs", ("Vms", null) },
+                { "VMScaleSet", ("Vms", null) },
+                { "DNS", ("Dns", null) },
+            };
+
         private Regex _regex;
         private ConcurrentDictionary<string, AppliedCache> _wordCache;
 
@@ -30,10 +44,9 @@ namespace AutoRest.CSharp.Mgmt.Models
         /// Instanciate a NameTransformer which uses the dictionary to transform the abbreviations in this word to correct casing
         /// </summary>
         /// <param name="acronymMapping"></param>
-        internal NameTransformer(IReadOnlyDictionary<string, AcronymMappingTarget> acronymMapping)
+        private NameTransformer()
         {
-            _acronymMapping = acronymMapping;
-            _regex = BuildRegex(acronymMapping.Keys);
+            _regex = BuildRegex(_acronymMapping.Keys);
             _wordCache = new ConcurrentDictionary<string, AppliedCache>();
         }
 
@@ -85,29 +98,29 @@ namespace AutoRest.CSharp.Mgmt.Models
             {
                 // in our regular expression, the content we want to find is in the second group
                 var matchGroup = match.Groups[2];
-                var replaceValue = _acronymMapping[matchGroup.Value];
+                var (propertyName, parameterName) = _acronymMapping[matchGroup.Value];
                 // append everything between the beginning and the index of this match
                 var everythingBeforeMatch = strToMatch.Substring(0, matchGroup.Index);
                 // append everything before myself
                 propertyNameBuilder.Append(everythingBeforeMatch);
                 parameterNameBuilder.Append(everythingBeforeMatch);
                 // append the replaced value
-                propertyNameBuilder.Append(replaceValue.Value);
+                propertyNameBuilder.Append(propertyName);
                 // see if everything before myself is empty, or is all invalid character for an identifier which will be trimmed off, which makes the current word the first word
                 if (!hasFirstWord && IsEquivelantEmpty(everythingBeforeMatch))
                 {
                     hasFirstWord = true;
-                    parameterNameBuilder.Append(replaceValue.ParameterValue ?? replaceValue.Value);
+                    parameterNameBuilder.Append(parameterName ?? propertyName);
                 }
                 else
-                    parameterNameBuilder.Append(replaceValue.Value);
+                    parameterNameBuilder.Append(propertyName);
                 // move to whatever is left unmatched
                 strToMatch = strToMatch.Substring(matchGroup.Index + matchGroup.Length);
 
                 string tempPropertyName = propertyNameBuilder.ToString() + strToMatch;
                 string tempParameterName = parameterNameBuilder.ToString() + strToMatch;
                 NameInfo tempNameInfo = new NameInfo(tempPropertyName, tempParameterName);
-                var step = new ApplyDetailStep(matchGroup.Value, replaceValue, tempNameInfo);
+                var step = new ApplyDetailStep(matchGroup.Value, tempNameInfo);
                 if (onMappingApplied != null)
                     onMappingApplied(step);
                 detailStep.Add(step);
