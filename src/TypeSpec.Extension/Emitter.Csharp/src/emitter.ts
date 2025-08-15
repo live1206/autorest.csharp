@@ -202,7 +202,7 @@ export async function $onEmit(context: EmitContext<AzureCSharpEmitterOptions>) {
             if (error.stdout) logger.verbose(error.stdout);
             throw error;
         }
-        if (!options["save-inputs"]) {
+        if (options["save-inputs"] === undefined || options["save-inputs"] === false) {
             // delete
             deleteFile(resolvePath(outputFolder, tspOutputFileName), logger);
             deleteFile(
